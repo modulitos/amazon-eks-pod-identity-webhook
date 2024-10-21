@@ -179,6 +179,7 @@ func main() {
 		saInformer,
 		cmInformer,
 		composeRoleArnCache,
+		clientset.CoreV1(),
 	)
 	stop := make(chan struct{})
 	informerFactory.Start(stop)
