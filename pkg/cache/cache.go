@@ -317,7 +317,10 @@ func New(defaultAudience,
 		cache.ResourceEventHandlerFuncs{
 			AddFunc: func(obj interface{}) {
 				sa := obj.(*v1.ServiceAccount)
-				c.addSA(sa)
+				go func() {
+					time.Sleep(1 * time.Second)
+					c.addSA(sa)
+				}()
 			},
 			DeleteFunc: func(obj interface{}) {
 				sa, ok := obj.(*v1.ServiceAccount)
