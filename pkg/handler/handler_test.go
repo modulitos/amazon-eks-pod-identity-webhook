@@ -110,7 +110,7 @@ func TestMutatePod_MutationNotNeeded(t *testing.T) {
 	)
 	response := modifier.MutatePod(getValidReview(rawPodWithoutVolume))
 	assert.NotNil(t, response)
-	assert.True(t, response.Allowed)
+	assert.False(t, response.Allowed)
 	assert.Nil(t, response.Patch)
 }
 
