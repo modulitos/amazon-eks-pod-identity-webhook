@@ -279,6 +279,7 @@ func New(defaultAudience,
 	cmInformer coreinformers.ConfigMapInformer,
 	composeRoleArn ComposeRoleArn,
 	SAGetter corev1.ServiceAccountsGetter,
+	debugSleep time.Duration,
 ) ServiceAccountCache {
 	hasSynced := func() bool {
 		if cmInformer != nil {
@@ -320,7 +321,14 @@ func New(defaultAudience,
 		cache.ResourceEventHandlerFuncs{
 			AddFunc: func(obj interface{}) {
 				sa := obj.(*v1.ServiceAccount)
-				c.addSA(sa)
+				if debugSleep == 0 {
+					c.addSA(sa)
+				} else {
+					go func() {
+						time.Sleep(debugSleep)
+						c.addSA(sa)
+					}()
+				}
 			},
 			DeleteFunc: func(obj interface{}) {
 				sa, ok := obj.(*v1.ServiceAccount)

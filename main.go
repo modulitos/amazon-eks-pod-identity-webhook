@@ -86,6 +86,8 @@ func main() {
 
 	debug := flag.Bool("enable-debugging-handlers", false, "Enable debugging handlers. Currently /debug/alpha/cache is supported")
 
+	debugSleep := flag.Duration("debug-sleep", 0, "how long to sleep for - testing only")
+
 	saLookupGracePeriod := flag.Duration("service-account-lookup-grace-period", 0, "The grace period for service account to be available in cache before not mutating a pod. Defaults to 0, what deactivates waiting. Carefully use values higher than a bunch of milliseconds as it may have significant impact on Kubernetes' pod scheduling performance.")
 
 	resyncPeriod := flag.Duration("resync-period", 60*time.Second, "The period to resync the SA informer cache, in seconds.")
@@ -182,6 +184,7 @@ func main() {
 		cmInformer,
 		composeRoleArnCache,
 		clientset.CoreV1(),
+		*debugSleep,
 	)
 	stop := make(chan struct{})
 	informerFactory.Start(stop)

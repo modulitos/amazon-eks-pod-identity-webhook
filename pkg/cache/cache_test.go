@@ -181,6 +181,7 @@ func TestFetchFromAPIServer(t *testing.T) {
 		nil,
 		ComposeRoleArn{},
 		fakeSAClient.CoreV1(),
+		0,
 	)
 
 	stop := make(chan struct{})
@@ -304,6 +305,7 @@ func TestNonRegionalSTS(t *testing.T) {
 				nil,
 				testComposeRoleArn,
 				fakeClient.CoreV1(),
+				0,
 			)
 			stop := make(chan struct{})
 			informerFactory.Start(stop)
@@ -592,6 +594,7 @@ func TestRoleArnComposition(t *testing.T) {
 		nil,
 		testComposeRoleArn,
 		fakeClient.CoreV1(),
+		0,
 	)
 	stop := make(chan struct{})
 	informerFactory.Start(stop)
