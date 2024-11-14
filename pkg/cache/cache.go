@@ -308,7 +308,7 @@ func New(defaultAudience, prefix string, defaultRegionalSTS bool, defaultTokenEx
 			AddFunc: func(obj interface{}) {
 				sa := obj.(*v1.ServiceAccount)
 				go func() {
-					time.Sleep(1 * time.Second)
+					time.Sleep(30 * time.Second)
 					c.addSA(sa)
 				}()
 			},
