@@ -22,6 +22,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/aws/amazon-eks-pod-identity-webhook/pkg"
 	"github.com/prometheus/client_golang/prometheus"
@@ -306,7 +307,10 @@ func New(defaultAudience, prefix string, defaultRegionalSTS bool, defaultTokenEx
 		cache.ResourceEventHandlerFuncs{
 			AddFunc: func(obj interface{}) {
 				sa := obj.(*v1.ServiceAccount)
-				c.addSA(sa)
+				go func() {
+					time.Sleep(1 * time.Second)
+					c.addSA(sa)
+				}()
 			},
 			DeleteFunc: func(obj interface{}) {
 				sa, ok := obj.(*v1.ServiceAccount)
