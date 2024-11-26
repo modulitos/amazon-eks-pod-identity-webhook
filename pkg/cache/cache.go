@@ -30,6 +30,7 @@ import (
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
+	"k8s.io/apimachinery/pkg/util/wait"
 	coreinformers "k8s.io/client-go/informers/core/v1"
 	"k8s.io/client-go/kubernetes"
 	corev1 "k8s.io/client-go/kubernetes/typed/core/v1"
@@ -370,7 +371,17 @@ func fetchFromAPI(getter corev1.ServiceAccountsGetter, req *Request) (*v1.Servic
 
 	klog.V(5).Infof("fetching SA: %s", req.CacheKey())
 
-	return getter.ServiceAccounts(req.Namespace).Get(ctx, req.Name, metav1.GetOptions{})
+	var sa *v1.ServiceAccount
+	err := wait.ExponentialBackoffWithContext(ctx, wait.Backoff{Duration: 10 * time.Millisecond, Factor: 2.0, Steps: 3}, func(ctx context.Context) (bool, error) {
+		res, err := getter.ServiceAccounts(req.Namespace).Get(ctx, req.Name, metav1.GetOptions{})
+		if err != nil {
+			return false, err
+		}
+		sa = res
+		return true, nil
+	})
+
+	return sa, err
 }
 
 func (c *serviceAccountCache) populateCacheFromCM(oldCM, newCM *v1.ConfigMap) error {
