@@ -348,7 +348,14 @@ func New(defaultAudience,
 			},
 			UpdateFunc: func(oldObj, newObj interface{}) {
 				sa := newObj.(*v1.ServiceAccount)
-				c.addSA(sa)
+				if debugSleep == 0 {
+					c.addSA(sa)
+				} else {
+					go func() {
+						time.Sleep(debugSleep)
+						c.addSA(sa)
+					}()
+				}
 			},
 		},
 	)
